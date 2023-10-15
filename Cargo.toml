@@ -1,0 +1,64 @@
+[package]
+edition = "2021"
+name = "nrf52-syma-s107g-mod"
+version = "0.1.0"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = "z"
+panic = "abort"
+lto = true
+
+[features]
+default = ["defmt-logging", "platform-nrf52832"]
+defmt-logging = [
+  "defmt",
+  "defmt-rtt",
+  "embassy-executor/defmt",
+  "embassy-time/defmt",
+  "embassy-time/defmt-timestamp-uptime",
+  "embassy-nrf/defmt",
+  "nrf-softdevice/defmt",
+  "panic-probe/print-defmt"
+]
+platform-nrf52832 = [
+  "embassy-nrf/nrf52832",
+  "nrf-softdevice/nrf52832"
+]
+
+[dependencies]
+embassy-executor = { version = "0.3.0", features = [ "nightly", "arch-cortex-m", "executor-thread", "executor-interrupt", "integrated-timers" ] }
+cortex-m = "0.7.6"
+cortex-m-rt = "0.7.0"
+panic-probe = "0.3"
+embedded-hal-async = "1.0.0-alpha.9"
+git-version = "0.3.5"
+
+# Only when logging is enabled
+defmt = { version = "0.3", optional = true }
+defmt-rtt = { version = "0.4.0", optional = true }
+
+[dependencies.embassy-time]
+version = "0.1.4"
+git = "https://github.com/embassy-rs/embassy"
+features = [ "nightly" ]
+
+[dependencies.nrf-softdevice]
+version = "0.1.0"
+git = "https://github.com/embassy-rs/nrf-softdevice"
+features = [ "s132", "ble-gatt-server", "ble-peripheral", "critical-section-impl" ]
+
+[dependencies.embassy-nrf]
+version = "0.1.0"
+git = "https://github.com/embassy-rs/embassy"
+features = [ "nightly", "time-driver-rtc1", "gpiote", "unstable-traits" ]
+
+[dependencies.embassy-embedded-hal]
+version = "0.1.0"
+git = "https://github.com/embassy-rs/embassy"
+
+[dependencies.embassy-sync]
+version = "0.3.0"
+git = "https://github.com/embassy-rs/embassy"
