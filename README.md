@@ -1,4 +1,4 @@
-![rust workflow](https://github.com/dossalab/potential-chainsaw/workflows/rust.yml/badge.svg)
+![rust workflow](https://github.com/dossalab/potential-chainsaw/actions/workflows/rust.yml/badge.svg)
 
 # This is potential-chainsaw, the universal remote control system (wip)
 
