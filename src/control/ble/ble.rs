@@ -7,7 +7,7 @@ use nrf_softdevice::ble::peripheral as blep;
 use nrf_softdevice::raw as nrf_defines;
 use nrf_softdevice::Softdevice;
 
-use crate::gatt::{GattServer, GattServerEvent};
+use super::gatt::{GattServer, GattServerEvent};
 
 const ADVERTISEMENT_INTERVAL: u32 = 1500;
 

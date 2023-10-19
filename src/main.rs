@@ -1,6 +1,8 @@
 #![no_std]
 #![no_main]
 #![feature(type_alias_impl_trait)]
+#![feature(async_fn_in_trait)]
+#![allow(dead_code)]
 
 use defmt::{info, unwrap};
 use git_version::git_version;
@@ -13,12 +15,11 @@ use embassy_nrf::{
 };
 use embassy_time::{Duration, Timer};
 
-mod ble;
-mod bq27xx;
-mod common;
+use crate::control::ble::{ble, power};
+
 mod control;
-mod gatt;
-mod power;
+mod sensors;
+mod common;
 
 bind_interrupts!(struct Irqs {
     SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0 => twim::InterruptHandler<peripherals::TWISPI0>;
