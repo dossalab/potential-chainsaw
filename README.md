@@ -1,3 +1,5 @@
+![rust workflow](https://github.com/dossalab/potential-chainsaw/workflows/rust.yml/badge.svg)
+
 # This is potential-chainsaw, the universal remote control system (wip)
 
 it runs on NRF5 and designed to be as universal as possible
