@@ -1,6 +1,5 @@
 use defmt::{debug, Format};
-use embassy_time::Duration;
-use embedded_hal_async::i2c;
+use embedded_hal_async::{delay, i2c};
 
 const BQ27427_TWI_ADDRESS: u8 = 0x55;
 
@@ -162,13 +161,15 @@ impl<I> defmt::Format for DeviceError<I> {
     }
 }
 
-pub struct Bq27xx<I> {
+pub struct Bq27xx<I, D> {
     i2c: I,
+    delay: D,
     addr: u8,
 }
 
-impl<I, E> Bq27xx<I>
+impl<I, D, E> Bq27xx<I, D>
 where
+    D: delay::DelayUs,
     I: i2c::I2c<Error = E>,
 {
     /*
@@ -233,10 +234,9 @@ where
      */
     async fn wait_flags(&mut self, mask: u16) -> Result<(), DeviceError<E>> {
         const FLAG_POLL_RETRIES: u32 = 10;
-        const FLAG_POLL_RETRY_INTERVAL: Duration = Duration::from_millis(10);
 
         for _ in 0..FLAG_POLL_RETRIES {
-            embassy_time::Timer::after(FLAG_POLL_RETRY_INTERVAL).await;
+            self.delay.delay_ms(500).await;
 
             let flags = self.get_flags().await?;
 
@@ -356,11 +356,11 @@ where
         Ok(DeviceType::from(response))
     }
 
-    pub fn new_with_address(i2c: I, addr: u8) -> Self {
-        Self { i2c, addr }
+    pub fn new_with_address(i2c: I, delay: D, addr: u8) -> Self {
+        Self { i2c, addr, delay }
     }
 
-    pub fn new(i2c: I) -> Self {
-        Self::new_with_address(i2c, BQ27427_TWI_ADDRESS)
+    pub fn new(i2c: I, delay: D) -> Self {
+        Self::new_with_address(i2c, delay, BQ27427_TWI_ADDRESS)
     }
 }

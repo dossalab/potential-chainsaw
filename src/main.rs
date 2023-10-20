@@ -11,7 +11,7 @@ use embassy_nrf::{
     gpio::{self, Pin},
     interrupt, peripherals, twim, Peripherals,
 };
-use embassy_time::{Duration, Timer};
+use embassy_time::{Delay, Duration, Timer};
 
 mod ble;
 mod bq27xx;
@@ -60,8 +60,15 @@ async fn main(spawner: Spawner) {
     ble::init(spawner).await;
     power::init(spawner).await;
 
-    unwrap!(spawner.spawn(blinky(p.P0_11.degrade())));
+    unwrap!(spawner.spawn(blinky(p.P0_00.degrade())));
 
-    // let config = twim::Config::default();
-    // let mut i2c = twim::Twim::new(e.TWISPI0, Irqs, e.P0_07, e.P0_08, config);
+    let config = twim::Config::default();
+    let mut i2c = twim::Twim::new(p.TWISPI0, Irqs, p.P0_07, p.P0_08, config);
+
+    let mut gauge = bq27xx::Bq27xx::new(&mut i2c, embassy_time::Delay);
+
+    unwrap!(gauge.set_chem_id(bq27xx::ChemId::B4200).await);
+
+    info!("selected chem id is {}", unwrap!(gauge.get_chem_id().await));
+    info!("capacity is {}", unwrap!(gauge.get_capacity().await));
 }

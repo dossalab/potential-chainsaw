@@ -43,7 +43,7 @@ defmt-rtt = { version = "0.4.0", optional = true }
 [dependencies.embassy-time]
 version = "0.1.4"
 git = "https://github.com/embassy-rs/embassy"
-features = [ "nightly" ]
+features = [ "nightly", "unstable-traits" ]
 
 [dependencies.nrf-softdevice]
 version = "0.1.0"
