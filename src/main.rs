@@ -2,6 +2,7 @@
 #![no_main]
 #![feature(type_alias_impl_trait)]
 
+use bq27xxx::{Bq27xx, ChemId};
 use defmt::{info, unwrap};
 use git_version::git_version;
 
@@ -11,10 +12,9 @@ use embassy_nrf::{
     gpio::{self, Pin},
     interrupt, peripherals, twim, Peripherals,
 };
-use embassy_time::{Delay, Duration, Timer};
+use embassy_time::{Duration, Timer};
 
 mod ble;
-mod bq27xx;
 mod common;
 mod control;
 mod gatt;
@@ -65,10 +65,17 @@ async fn main(spawner: Spawner) {
     let config = twim::Config::default();
     let mut i2c = twim::Twim::new(p.TWISPI0, Irqs, p.P0_07, p.P0_08, config);
 
-    let mut gauge = bq27xx::Bq27xx::new(&mut i2c, embassy_time::Delay);
+    let mut gauge = Bq27xx::new(&mut i2c, embassy_time::Delay, 0x55);
 
-    unwrap!(gauge.set_chem_id(bq27xx::ChemId::B4200).await);
+    info!("device is {}", unwrap!(gauge.device_type().await));
+    unwrap!(gauge.write_chem_id(ChemId::B4200).await);
 
-    info!("selected chem id is {}", unwrap!(gauge.get_chem_id().await));
-    info!("capacity is {}", unwrap!(gauge.get_capacity().await));
+    loop {
+        Timer::after_secs(3).await;
+
+        info!("SOC is {}%", unwrap!(gauge.state_of_charge().await));
+        info!("voltage is {}mv", unwrap!(gauge.voltage().await));
+        info!("current is {}mA", unwrap!(gauge.average_current().await));
+        info!("flags are [{}]", unwrap!(gauge.get_flags().await));
+    }
 }

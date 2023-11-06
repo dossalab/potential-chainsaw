@@ -1,4 +1,4 @@
-use defmt::{info, unwrap};
+use defmt::info;
 use embassy_executor::Spawner;
 use embassy_nrf::gpio;
 
