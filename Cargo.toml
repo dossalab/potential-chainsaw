@@ -12,7 +12,7 @@ panic = "abort"
 lto = true
 
 [features]
-default = ["defmt-logging", "platform-nrf52832"]
+default = ["defmt-logging"]
 defmt-logging = [
   "defmt",
   "defmt-rtt",
@@ -24,9 +24,21 @@ defmt-logging = [
   "nrf-softdevice/defmt",
   "panic-probe/print-defmt"
 ]
+platform-nrf52840 = [
+  "embassy-nrf/nrf52840",
+  "nrf-softdevice/nrf52840",
+  "softdevice-s140"
+]
 platform-nrf52832 = [
   "embassy-nrf/nrf52832",
-  "nrf-softdevice/nrf52832"
+  "nrf-softdevice/nrf52832",
+  "softdevice-s132"
+]
+softdevice-s132 = [
+  "nrf-softdevice/s132",
+]
+softdevice-s140 = [
+  "nrf-softdevice/s140",
 ]
 
 [dependencies]
@@ -51,7 +63,7 @@ features = [ "nightly", "unstable-traits" ]
 [dependencies.nrf-softdevice]
 version = "0.1.0"
 git = "https://github.com/embassy-rs/nrf-softdevice"
-features = [ "s132", "ble-gatt-server", "ble-peripheral", "critical-section-impl" ]
+features = [ "ble-gatt-server", "ble-peripheral", "critical-section-impl" ]
 
 [dependencies.embassy-nrf]
 version = "0.1.0"
@@ -65,3 +77,6 @@ git = "https://github.com/embassy-rs/embassy"
 [dependencies.embassy-sync]
 version = "0.4.0"
 git = "https://github.com/embassy-rs/embassy"
+
+[build-dependencies]
+byte-unit = "4.0.19"
